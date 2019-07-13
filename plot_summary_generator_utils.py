@@ -7,7 +7,7 @@
 # .py file with helper functions
 
 
-# In[12]:
+# In[20]:
 
 
 import numpy as np
@@ -19,6 +19,8 @@ import nltk.data
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import sent_tokenize
 from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer, LancasterStemmer
+from nltk.stem import WordNetLemmatizer
 import string
 from imdb import IMDb
 
@@ -87,26 +89,15 @@ def plot_aggregator_imdb(imdb_movie_id_list):
     return plot_agg
 
 
-# In[63]:
-
-
-#%time plots = plot_aggregator_imdb(idls[:-1])
-
-
-# In[64]:
-
-
-#plots
-
-
-# In[65]:
+# In[42]:
 
 
 # function to clean up and tokenize the raw text of the corpus
-def preprocess_corpus_text(raw_string):
+def preprocess_corpus_text(raw_string,lemmatize=True):
     transtable = str.maketrans('', '', string.punctuation)
     raw_string = re.sub(r'(?<=[.,])(?=[^\s])', r' ', raw_string)
     stop_words=set(stopwords.words('english'))
+    wordnet_lemmatizer = WordNetLemmatizer()
     sentence_tokens = sent_tokenize(raw_string)
     word_tokens  = []
     for sentence in sentence_tokens:
@@ -117,50 +108,29 @@ def preprocess_corpus_text(raw_string):
     for sentence in word_tokens:
         ntk = [w for w in sentence if not w in stop_words]
         final_tokens.append(ntk)
-    return final_tokens
+    if lemmatize:
+        lemmatized_tokens = []
+        for i in range(len(final_tokens)):
+            wordtoks = []
+            for word in final_tokens[i]:
+                wordlemma = wordnet_lemmatizer.lemmatize(word,pos='v')
+                wordtoks.append(wordlemma)
+            lemmatized_tokens.append(wordtoks)
+        return lemmatized_tokens
+    else:
+        return final_tokens
 
 
-# In[66]:
+# In[47]:
 
 
-#plot_tokens = preprocess_corpus_text(plots)
-#plot_tokens[-100:-1]
+#teststr = 'the next day steve is summoned to the brooklyn bunker to see phillips and stark. steve is approached by a beautiful female officer who wishes to thank him for his service the best way she knows how. peggy walks in on steve kissing the enlisted-woman and angrily storms away. steve apologetically follows her to starks lab, insisting that he gets nervous around women and asks why he should apologize if carter and stark have a thing going. stark quickly shoots down the rumored relationship and takes steve to his weapons engineering lab. he remarks that rogers has become attached to the triangular shield, which steve says is a handy tool in the field. on a table are several prototype shields with sophisticated components, however steve finds a plain, circular shield on a lower shelf.'
 
 
-# In[ ]:
+# In[48]:
 
 
-# function for stemming and lemmatization
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
+#preprocess_corpus_text(teststr)
 
 
 # In[ ]:
