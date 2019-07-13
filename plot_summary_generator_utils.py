@@ -7,7 +7,7 @@
 # .py file with helper functions
 
 
-# In[20]:
+# In[106]:
 
 
 import numpy as np
@@ -18,9 +18,11 @@ import wikipedia
 import nltk.data
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import sent_tokenize
-from nltk.corpus import stopwords
+from nltk.corpus import stopwords, wordnet
 from nltk.stem import PorterStemmer, LancasterStemmer
 from nltk.stem import WordNetLemmatizer
+from itertools import chain
+from difflib import get_close_matches as gcm
 import string
 from imdb import IMDb
 
@@ -89,7 +91,43 @@ def plot_aggregator_imdb(imdb_movie_id_list):
     return plot_agg
 
 
-# In[42]:
+# In[39]:
+
+
+def get_wordnet_pos(word):
+    """Map POS tag to first character lemmatize() accepts"""
+    tag = nltk.pos_tag([word])[0][1][0].upper()
+    tag_dict = {"J": wordnet.ADJ,
+                "N": wordnet.NOUN,
+                "V": wordnet.VERB,
+                "R": wordnet.ADV}
+
+    return tag_dict.get(tag, wordnet.NOUN)
+
+
+# In[108]:
+
+
+# function to lemmatize words according to corresponding part of speech
+# will try to include different lemmatizers i.espacey, stanford, textblob
+def lemma(word):
+    if get_wordnet_pos(word) == 'r':
+        try:
+            possible_adj = []
+            for ss in wordnet.synsets(word):
+              for lemmas in ss.lemmas(): # all possible lemmas
+                  for ps in lemmas.pertainyms(): # all possible pertainyms
+                      possible_adj.append(ps.name())
+            word = gcm(word,possible_adj)[0]
+        except:
+            word = word
+    lemmatizer = WordNetLemmatizer()
+    pos = get_wordnet_pos(word)
+    lemmatized_word = lemmatizer.lemmatize(word, get_wordnet_pos(word))
+    return lemmatized_word
+
+
+# In[67]:
 
 
 # function to clean up and tokenize the raw text of the corpus
@@ -113,7 +151,7 @@ def preprocess_corpus_text(raw_string,lemmatize=True):
         for i in range(len(final_tokens)):
             wordtoks = []
             for word in final_tokens[i]:
-                wordlemma = wordnet_lemmatizer.lemmatize(word,pos='v')
+                wordlemma = lemma(word)
                 wordtoks.append(wordlemma)
             lemmatized_tokens.append(wordtoks)
         return lemmatized_tokens
@@ -121,16 +159,118 @@ def preprocess_corpus_text(raw_string,lemmatize=True):
         return final_tokens
 
 
-# In[47]:
+# In[118]:
 
 
 #teststr = 'the next day steve is summoned to the brooklyn bunker to see phillips and stark. steve is approached by a beautiful female officer who wishes to thank him for his service the best way she knows how. peggy walks in on steve kissing the enlisted-woman and angrily storms away. steve apologetically follows her to starks lab, insisting that he gets nervous around women and asks why he should apologize if carter and stark have a thing going. stark quickly shoots down the rumored relationship and takes steve to his weapons engineering lab. he remarks that rogers has become attached to the triangular shield, which steve says is a handy tool in the field. on a table are several prototype shields with sophisticated components, however steve finds a plain, circular shield on a lower shelf.'
 
 
-# In[48]:
+# In[119]:
 
 
-#preprocess_corpus_text(teststr)
+#preprocess_corpus_text(teststr,lemmatize=True)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
