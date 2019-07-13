@@ -1,0 +1,5 @@
+/.ipynb_checkpoints
+/__pycache__
+/plot_summary_generator
+title.basics.tsv.gz
+~$corpus_movies_list.xlsx
