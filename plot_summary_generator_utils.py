@@ -1,15 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
 # .py file with helper functions
-
-
 # In[106]:
-
-
 import numpy as np
 import pandas as pd
 import re
@@ -28,8 +21,6 @@ from imdb import IMDb
 
 
 # In[15]:
-
-
 #function to extract list of wiki page titles
 def titles_list(filepath):
     movies = pd.read_excel(open(filepath,'rb'))
@@ -38,8 +29,6 @@ def titles_list(filepath):
 
 
 # In[21]:
-
-
 # function to extract imdb movie ids
 def imdb_id_list(filepath):
     movies = pd.read_excel(open(filepath,'rb'))
@@ -48,8 +37,6 @@ def imdb_id_list(filepath):
 
 
 # In[36]:
-
-
 #function to pull the text of plot section from a movie wiki page
 def plot_puller_wiki(movie):
     movie_plot = wikipedia.WikipediaPage(title = movie).section('Plot')
@@ -58,8 +45,6 @@ def plot_puller_wiki(movie):
 
 
 # In[37]:
-
-
 def plot_puller_imdb(imdb_movie_id):
     ia = IMDb()
     movie = ia.get_movie(imdb_movie_id)
@@ -69,8 +54,6 @@ def plot_puller_imdb(imdb_movie_id):
 
 
 # In[19]:
-
-
 # function to aggregate plots of all movies to be inclued in the corpus
 def plot_aggregator_wiki(titles_list):
     plot_agg = ''
@@ -81,8 +64,6 @@ def plot_aggregator_wiki(titles_list):
 
 
 # In[42]:
-
-
 def plot_aggregator_imdb(imdb_movie_id_list):
     plot_agg = ''
     for i, movie_id in enumerate(imdb_movie_id_list):
@@ -92,8 +73,6 @@ def plot_aggregator_imdb(imdb_movie_id_list):
 
 
 # In[39]:
-
-
 def get_wordnet_pos(word):
     """Map POS tag to first character lemmatize() accepts"""
     tag = nltk.pos_tag([word])[0][1][0].upper()
@@ -106,8 +85,6 @@ def get_wordnet_pos(word):
 
 
 # In[108]:
-
-
 # function to lemmatize words according to corresponding part of speech
 # will try to include different lemmatizers i.espacey, stanford, textblob
 def lemma(word):
@@ -123,13 +100,11 @@ def lemma(word):
             word = word
     lemmatizer = WordNetLemmatizer()
     pos = get_wordnet_pos(word)
-    lemmatized_word = lemmatizer.lemmatize(word, get_wordnet_pos(word))
+    lemmatized_word = lemmatizer.lemmatize(word, get_wordnet_pos(word,pos))
     return lemmatized_word
 
 
 # In[67]:
-
-
 # function to clean up and tokenize the raw text of the corpus
 def preprocess_corpus_text(raw_string,lemmatize=True):
     transtable = str.maketrans('', '', string.punctuation)
