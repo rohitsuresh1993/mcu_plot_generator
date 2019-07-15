@@ -71,7 +71,7 @@ from gensim.models import Word2Vec
 # In[86]:
 
 
-get_ipython().run_line_magic('time', 'embed = Word2Vec(corpus_tokens, min_count = 3, sg = 1, iter=100, negative=10)')
+get_ipython().run_line_magic('time', 'embed = Word2Vec(corpus_tokens, min_count = 3, sg = 1, iter=100, negative=10, sorted_vocab=1)')
 
 
 # In[87]:
@@ -84,7 +84,7 @@ print(embed)
 
 
 embed_words = list(embed.wv.vocab)
-print(embed_words[0:25])
+print(embed_words[:25])
 
 
 # In[89]:
@@ -126,7 +126,7 @@ res1[:3]
 # In[117]:
 
 
-res2 =word_vectors.most_similar(positive=['thor','tony'],negative=['odin'])
+res2 =word_vectors.most_similar(positive=['thor','tony'],negative=['pepper'])
 
 
 # In[118]:

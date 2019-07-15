@@ -100,7 +100,7 @@ def lemma(word):
             word = word
     lemmatizer = WordNetLemmatizer()
     pos = get_wordnet_pos(word)
-    lemmatized_word = lemmatizer.lemmatize(word, get_wordnet_pos(word,pos))
+    lemmatized_word = lemmatizer.lemmatize(word, get_wordnet_pos(word))
     return lemmatized_word
 
 
