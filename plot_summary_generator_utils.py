@@ -107,6 +107,7 @@ def lemma(word):
 # In[67]:
 # function to clean up and tokenize the raw text of the corpus
 def preprocess_corpus_text(raw_string,lemmatize=True):
+    raw_string = raw_string.lower().replace('...','.').replace('•','.')
     transtable = str.maketrans('', '', string.punctuation)
     raw_string = re.sub(r'(?<=[.,])(?=[^\s])', r' ', raw_string)
     stop_words=set(stopwords.words('english'))
