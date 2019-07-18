@@ -18,7 +18,9 @@ from itertools import chain
 from difflib import get_close_matches as gcm
 import string
 from imdb import IMDb
-
+import wikia
+from urllib.request import urlopen as uReq
+from bs4 import BeautifulSoup as soup
 
 # In[15]:
 #function to extract list of wiki page titles
@@ -107,7 +109,7 @@ def lemma(word):
 # In[67]:
 # function to clean up and tokenize the raw text of the corpus
 def preprocess_corpus_text(raw_string,lemmatize=True):
-    raw_string = raw_string.lower().replace('...','.').replace('•','.')
+    raw_string  = raw_string.lower()
     transtable = str.maketrans('', '', string.punctuation)
     raw_string = re.sub(r'(?<=[.,])(?=[^\s])', r' ', raw_string)
     stop_words=set(stopwords.words('english'))
@@ -130,43 +132,87 @@ def preprocess_corpus_text(raw_string,lemmatize=True):
                 wordlemma = lemma(word)
                 wordtoks.append(wordlemma)
             lemmatized_tokens.append(wordtoks)
+        while [] in lemmatized_tokens:
+            lemmatized_tokens.remove([])
         return lemmatized_tokens
     else:
+        while [] in final_tokens:
+            final_tokens.remove([])
         return final_tokens
 
-
 # In[118]:
-
-
-#teststr = 'the next day steve is summoned to the brooklyn bunker to see phillips and stark. steve is approached by a beautiful female officer who wishes to thank him for his service the best way she knows how. peggy walks in on steve kissing the enlisted-woman and angrily storms away. steve apologetically follows her to starks lab, insisting that he gets nervous around women and asks why he should apologize if carter and stark have a thing going. stark quickly shoots down the rumored relationship and takes steve to his weapons engineering lab. he remarks that rogers has become attached to the triangular shield, which steve says is a handy tool in the field. on a table are several prototype shields with sophisticated components, however steve finds a plain, circular shield on a lower shelf.'
-
-
 # In[119]:
+# In[ ]:
+# function to pull plot synopsis from individual marvel wikia pages
+def comic_plot(comic_vol_issue, wiki = 'marvel'):
+    try:
+        full_page = wikia.page(wiki, comic_vol_issue)
+        pg = full_page.content
+        pg = re.sub(r'(?<=[.,])(?=[^\s])', r' ', pg)
+        plot = pg.lower()
+        rm_list = ['featured characters:','supporting characters:','antagonists:', 'races and species:',
+                   'other characters:','locations:','items:','vehicles:','\n','\xa0']
+        plot = plot.replace('‘','\'').replace('...','.').replace('•','.').replace("\'","").replace('s.h.i.e.l.d.','SHIELD ').replace('’','\'').replace('s. h. i. e. l. d. ','SHIELD ')
+        for item in rm_list:
+            plot = plot.replace(item,'')
+        if plot == '':
+            return None
+        else:
+            return plot
+    except:
+        return None
 
 
-#preprocess_corpus_text(teststr,lemmatize=True)
 
 
 # In[ ]:
-
+# function to find comic book titles in each 'all comics' page
+def comic_titles_finder(my_url):
+    uClient = uReq(my_url)
+    page_html = uClient.read()
+    uClient.close()
+    page_soup = soup(page_html,'html.parser')
+    next_page_tag = page_soup.findAll('a',{'class':'category-page__pagination-next wds-button wds-is-secondary'})
+    if next_page_tag:
+        next_page_link = next_page_tag[0]['href']
+    else:
+        next_page_link = None
+    comic_titles = page_soup.findAll('a',{'class':'category-page__member-link'})
+    comic_vol_issue_list = []
+    for tag in comic_titles:
+        name = tag['title']
+        if 'Category:' not in name:
+            comic_vol_issue_list.append(name)
+    return comic_vol_issue_list, next_page_link
 
 
 
 
 # In[ ]:
+def make_comic_titles_list(page_url,target_file):
+    filename = target_file + '.csv'
+    f = open(filename,'w')
+    headers = 'comic_title\n'
+    f.write(headers)
+    while page_url:
+        cl,page_url = comic_titles_finder(page_url)
+        for title in cl:
+            f.write(title.replace(',','')+'\n')
+    f.close()
 
-
-
+'''RUN ONLY ONCE'''
+#make_comic_titles_list(first_page_url,'comic_titles')
 
 
 # In[ ]:
-
-
-
-
-
-# In[ ]:
-
+# function to aggregate plots of all comic books
+def comic_plot_agg(titles_list,target_file):
+    filename = target_file + '.txt'
+    for i,title in enumerate(titles_list):
+        plot = comic_plot(title)
+        if plot:
+            with open(filename, 'a+') as f:
+                f.write(plot)
 
 
 

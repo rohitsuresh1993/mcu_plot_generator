@@ -3,3 +3,5 @@
 /plot_summary_generator
 title.basics.tsv.gz
 ~$corpus_movies_list.xlsx
+comic_corpus.txt
+comic_titles.csv
