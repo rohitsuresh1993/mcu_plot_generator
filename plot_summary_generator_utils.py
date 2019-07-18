@@ -206,6 +206,7 @@ def make_comic_titles_list(page_url,target_file):
 
 # In[ ]:
 # function to aggregate plots of all comic books
+# manually delete target_file if it already exists
 def comic_plot_agg(titles_list,target_file):
     filename = target_file + '.txt'
     for i,title in enumerate(titles_list):
