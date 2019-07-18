@@ -223,7 +223,6 @@ def comic_plot_agg(titles_list,target_file):
 
 
 
-
 # In[ ]:
 
 
