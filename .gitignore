@@ -5,3 +5,9 @@ title.basics.tsv.gz
 ~$corpus_movies_list.xlsx
 comic_corpus.txt
 comic_titles.csv
+private.ppk
+public_key.ppk
+main_generator_aws.py
+1000_comic_model
+corpus_1000_random.txt
+aws_text_numbers.txt

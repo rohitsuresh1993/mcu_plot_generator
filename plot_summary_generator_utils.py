@@ -151,8 +151,8 @@ def comic_plot(comic_vol_issue, wiki = 'marvel'):
         pg = re.sub(r'(?<=[.,])(?=[^\s])', r' ', pg)
         plot = pg.lower()
         rm_list = ['featured characters:','supporting characters:','antagonists:', 'races and species:',
-                   'other characters:','locations:','items:','vehicles:','\n','\xa0']
-        plot = plot.replace('‘','\'').replace('...','.').replace('•','.').replace("\'","").replace('s.h.i.e.l.d.','SHIELD ').replace('’','\'').replace('s. h. i. e. l. d. ','SHIELD ')
+                   'other characters:','locations:','items:','vehicles:','villains:','\n','\xa0']
+        plot = plot.replace('‘','\'').replace('...','.').replace('…','.').replace('•','.').replace("\'","").replace('s.h.i.e.l.d.','SHIELD ').replace('’','\'').replace('s. h. i. e. l. d. ','SHIELD ')
         for item in rm_list:
             plot = plot.replace(item,'')
         if plot == '':
@@ -212,14 +212,13 @@ def comic_plot_agg(titles_list,target_file):
     for i,title in enumerate(titles_list):
         plot = comic_plot(title)
         if plot:
-            with open(filename, 'a+') as f:
+            with open(filename, 'a+',encoding="utf-8") as f:
                 f.write(plot)
 
 
 
 
 # In[ ]:
-
 
 
 
