@@ -21,7 +21,7 @@ from imdb import IMDb
 import wikia
 from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup
-
+from random import sample
 # In[15]:
 #function to extract list of wiki page titles
 def titles_list(filepath):
@@ -50,9 +50,12 @@ def plot_puller_wiki(movie):
 def plot_puller_imdb(imdb_movie_id):
     ia = IMDb()
     movie = ia.get_movie(imdb_movie_id)
-    movie_plot = str(movie['synopsis'])
-    movie_plot = movie_plot.replace('\n','').replace("\'","").replace("\\","").lower()
-    return movie_plot
+    try:
+        movie_plot = str(movie['synopsis'])
+        movie_plot = movie_plot.replace('\n','').replace("\'","").replace("\\","").lower()
+        return movie_plot
+    except:
+        return None
 
 
 # In[19]:
@@ -61,17 +64,21 @@ def plot_aggregator_wiki(titles_list):
     plot_agg = ''
     for i, movie in enumerate(titles_list):
         movie_plot = plot_puller_wiki(movie)
-        plot_agg += movie_plot
+        if movie_plot:
+            plot_agg += movie_plot
+        else:
+            plot_agg = plot_agg
     return plot_agg
 
-
 # In[42]:
-def plot_aggregator_imdb(imdb_movie_id_list):
+def plot_aggregator_imdb(imdb_movie_id_list, target_file):
+    filename = target_file+'.txt'
     plot_agg = ''
     for i, movie_id in enumerate(imdb_movie_id_list):
         movie_plot = plot_puller_imdb(movie_id[2:])
-        plot_agg += movie_plot
-    return plot_agg
+        if movie_plot:
+            with open(filename, 'a+', encoding="utf-8") as f:
+                f.write(movie_plot)
 
 
 # In[39]:
@@ -108,8 +115,8 @@ def lemma(word):
 
 # In[67]:
 # function to clean up and tokenize the raw text of the corpus
-def preprocess_corpus_text(raw_string,lemmatize=True):
-    raw_string  = raw_string.lower()
+def preprocess_corpus_text(raw_string,lemmatize = True,remove_stopwords = True):
+    raw_string = raw_string.lower()
     transtable = str.maketrans('', '', string.punctuation)
     raw_string = re.sub(r'(?<=[.,])(?=[^\s])', r' ', raw_string)
     stop_words=set(stopwords.words('english'))
@@ -121,9 +128,12 @@ def preprocess_corpus_text(raw_string,lemmatize=True):
         tok = word_tokenize(clean_sentence)
         word_tokens.append(tok)
     final_tokens = []
-    for sentence in word_tokens:
-        ntk = [w for w in sentence if not w in stop_words]
-        final_tokens.append(ntk)
+    if remove_stopwords:
+        for sentence in word_tokens:
+            ntk = [w for w in sentence if not w in stop_words]
+            final_tokens.append(ntk)
+    else:
+        final_tokens = word_tokens
     if lemmatize:
         lemmatized_tokens = []
         for i in range(len(final_tokens)):
@@ -139,7 +149,6 @@ def preprocess_corpus_text(raw_string,lemmatize=True):
         while [] in final_tokens:
             final_tokens.remove([])
         return final_tokens
-
 # In[118]:
 # In[119]:
 # In[ ]:

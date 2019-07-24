@@ -11,3 +11,5 @@ main_generator_aws.py
 1000_comic_model
 corpus_1000_random.txt
 aws_text_numbers.txt
+combined_plots.txt
+mcu_agg_plots.txt
