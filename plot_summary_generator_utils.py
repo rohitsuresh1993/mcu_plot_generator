@@ -22,6 +22,9 @@ import wikia
 from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup
 from random import sample
+import gensim
+from keras.preprocessing.sequence import pad_sequences
+
 # In[15]:
 #function to extract list of wiki page titles
 def titles_list(filepath):
@@ -228,83 +231,13 @@ def comic_plot_agg(titles_list,target_file):
 
 
 # In[ ]:
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
+def get_weight_matrix(embedding):
+    vocab = embedding.wv.vocab
+    all_words = list(vocab)
+    vocab_size = len(all_words) + 1
+    # define weight matrix dimensions with all 0
+    weight_matrix = np.zeros((vocab_size,embedding.vector_size))
+    # step vocab, store vectors using the Tokenizer's integer mapping
+    for i in range(len(all_words)):
+        weight_matrix[i + 1] = embedding[all_words[i]]
+    return weight_matrix
